@@ -1,0 +1,63 @@
+# Apache
+- name: httpdのインストール
+  yum: name=httpd24 state=present
+
+- name: apacheの起動とenabled設定
+  service: name=httpd state=started enabled=yes
+
+- name: DocumentRootを/vagrant/publicに変更
+  replace:
+    dest=/etc/httpd/conf/httpd.conf
+    regexp='DocumentRoot "/var/www/html"'
+    replace='DocumentRoot "/vagrant/public"'
+
+- name: .htaccessを有効にする
+  replace:
+    dest=/etc/httpd/conf/httpd.conf
+    regexp='AllowOverride None'
+    replace='AllowOverride All'
+
+# PHP
+- name: PHPのインストール
+  yum:
+    name:
+      - php71
+      - php71-mysqlnd
+      - php71-mbstring
+      - php71-pdo
+    state: present
+
+# mysql
+- name: MySQLのインストール
+  yum:
+    name:
+      - mysql
+    state: present
+
+# タイムゾーン設定
+- name: set timezone to Asia/Tokyo
+  timezone:
+    name: Asia/Tokyo
+
+# コンポーザー
+# TODO:warningの解消（URL指定のせい？現状インストールは成功するので後回し）
+- name: composerのインストール
+  shell: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin && mv /usr/bin/composer.phar /usr/bin/composer
+    creates=/usr/bin/composer
+
+- name: ストレージフォルダが書き込み可能であること
+  file:
+    path: "/vagrant/storage"
+    state: directory
+    recurse: true
+    mode: 0777
+
+- name: キャッシュフォルダが書き込み可能であること
+  file:
+    path: "/vagrant/bootstrap/cache"
+    state: directory
+    recurse: true
+    mode: 0777
+
+- name: apacheの再起動
+  service: name=httpd state=restarted
