@@ -1,24 +1,58 @@
 # Apache
-- name: httpdのインストール
-  yum: name=httpd24 state=present
+- name: httpdがインストールされていること
+  yum:
+    name: httpd24
+    state: present
 
-- name: apacheの起動とenabled設定
-  service: name=httpd state=started enabled=yes
+- name: Apacheが起動してenableになっていること
+  service:
+    name: httpd
+    state: started
+    enabled: yes
 
-- name: DocumentRootを/vagrant/publicに変更
+- name: Prefork MPMが有効になっていること
+  lineinfile:
+    path: /etc/httpd/conf.modules.d/00-mpm.conf
+    state: present
+    backrefs: yes
+    regexp: '^#(LoadModule mpm_prefork_module.*)$'
+    line: '\1'
+  notify: restart httpd
+
+- name: Worker MPMが無効になっていること
+  lineinfile:
+    path: /etc/httpd/conf.modules.d/00-mpm.conf
+    state: present
+    backrefs: yes
+    regexp: '^(LoadModule mpm_worker_module.*)$'
+    line: '#\1'
+  notify: restart httpd
+
+- name: Event MPMが無効になっていること
+  lineinfile:
+    path: /etc/httpd/conf.modules.d/00-mpm.conf
+    state: present
+    backrefs: yes
+    regexp: '^(LoadModule mpm_event_module.*)$'
+    line: '#\1'
+  notify: restart httpd
+
+- name: DocumentRootが/vagrant/publicになっていること
   replace:
-    dest=/etc/httpd/conf/httpd.conf
-    regexp='DocumentRoot "/var/www/html"'
-    replace='DocumentRoot "/vagrant/public"'
+    dest: /etc/httpd/conf/httpd.conf
+    regexp: 'DocumentRoot "/var/www/html"'
+    replace: 'DocumentRoot "/vagrant/public"'
+  notify: restart httpd
 
-- name: .htaccessを有効にする
+- name: .htaccessが有効になっていること
   replace:
-    dest=/etc/httpd/conf/httpd.conf
-    regexp='AllowOverride None'
-    replace='AllowOverride All'
+    dest: /etc/httpd/conf/httpd.conf
+    regexp: 'AllowOverride None'
+    replace: 'AllowOverride All'
+  notify: restart httpd
 
 # PHP
-- name: PHPのインストール
+- name: PHPとPHP関連モジュールがインストールされていること
   yum:
     name:
       - php71
@@ -28,23 +62,23 @@
     state: present
 
 # mysql
-- name: MySQLのインストール
+- name: MySQLがインストールされていること
   yum:
-    name:
-      - mysql
+    name: mysql
     state: present
 
 # タイムゾーン設定
-- name: set timezone to Asia/Tokyo
+- name: timezoneが「Asia/Tokyo」となっていること
   timezone:
     name: Asia/Tokyo
 
 # コンポーザー
 # TODO:warningの解消（URL指定のせい？現状インストールは成功するので後回し）
-- name: composerのインストール
+- name: composerがインストールされていること
   shell: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin && mv /usr/bin/composer.phar /usr/bin/composer
     creates=/usr/bin/composer
 
+# laravel関連設定
 - name: ストレージフォルダが書き込み可能であること
   file:
     path: "/vagrant/storage"
@@ -58,6 +92,3 @@
     state: directory
     recurse: true
     mode: 0777
-
-- name: apacheの再起動
-  service: name=httpd state=restarted
