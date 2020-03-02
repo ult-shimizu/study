@@ -44,6 +44,20 @@
     replace: 'DocumentRoot "/vagrant/public"'
   notify: restart httpd
 
+- name: /vagranの設定がされていること
+  replace:
+    dest: /etc/httpd/conf/httpd.conf
+    regexp: '<Directory "/var/www">'
+    replace: '<Directory "/vagrant">'
+  notify: restart httpd
+
+- name: /vagrant/publicの設定がされていること
+  replace:
+    dest: /etc/httpd/conf/httpd.conf
+    regexp: '<Directory "/var/www/html">'
+    replace: '<Directory "/vagrant/public">'
+  notify: restart httpd
+
 - name: .htaccessが有効になっていること
   replace:
     dest: /etc/httpd/conf/httpd.conf
@@ -59,7 +73,9 @@
       - php71-mysqlnd
       - php71-mbstring
       - php71-pdo
+      - php71-bcmath
     state: present
+  notify: restart httpd
 
 # mysql
 - name: MySQLがインストールされていること
