@@ -1,0 +1,27 @@
+- name: "[deployer] ルートディレクトリの確認"
+  shell: "echo $(dirname {{ project_root }})"
+  register: deploy_base
+
+- name: "[deployer] ルートディレクトリ作成"
+  file:
+    path: "{{ deploy_base.stdout }}"
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: 0775
+    state: directory
+
+- name: "[deployer] sharedフォルダ生成"
+  file:
+    path: "{{ deploy_base.stdout }}/shared"
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: 0775
+    state: directory
+
+- name: "[deployer] .envファイルの設定"
+  template:
+    src: "../templates/.env.j2"
+    dest: "{{ deploy_base.stdout }}/shared/.env"
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: 0664

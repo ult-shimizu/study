@@ -1,0 +1,21 @@
+- name: ストレージフォルダが書き込み可能であること
+  file:
+    path: "{{ project_root }}/storage"
+    state: directory
+    recurse: true
+    mode: 0777
+
+- name: キャッシュフォルダが書き込み可能であること
+  file:
+    path: "{{ project_root }}/bootstrap/cache"
+    state: directory
+    recurse: true
+    mode: 0777
+
+- name: .envファイルの設定
+  template:
+    src: "../templates/.env.j2"
+    dest: "{{ project_root }}/.env"
+    owner: "{{ app_user }}"
+    group: "{{ app_user }}"
+    mode: 0664

@@ -1,3 +1,9 @@
+- name: yumがupdate済であること
+  yum:
+    name: '*'
+    state: latest
+    update_cache: yes
+
 # Apache
 - name: httpdがインストールされていること
   yum:
@@ -37,25 +43,18 @@
     line: '#\1'
   notify: restart httpd
 
-- name: DocumentRootが/vagrant/publicになっていること
+- name: DocumentRootが設定されていること
   replace:
     dest: /etc/httpd/conf/httpd.conf
-    regexp: 'DocumentRoot "/var/www/html"'
-    replace: 'DocumentRoot "/vagrant/public"'
+    regexp: DocumentRoot "/var/www/html"
+    replace: DocumentRoot "{{ document_root }}"
   notify: restart httpd
 
-- name: /vagranの設定がされていること
+- name: DocumentRootのディレクトリ設定がされていること
   replace:
     dest: /etc/httpd/conf/httpd.conf
-    regexp: '<Directory "/var/www">'
-    replace: '<Directory "/vagrant">'
-  notify: restart httpd
-
-- name: /vagrant/publicの設定がされていること
-  replace:
-    dest: /etc/httpd/conf/httpd.conf
-    regexp: '<Directory "/var/www/html">'
-    replace: '<Directory "/vagrant/public">'
+    regexp: <Directory "/var/www/html">
+    replace: <Directory "{{ document_root }}">
   notify: restart httpd
 
 - name: .htaccessが有効になっていること
@@ -94,17 +93,8 @@
   shell: curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/bin && mv /usr/bin/composer.phar /usr/bin/composer
     creates=/usr/bin/composer
 
-# laravel関連設定
-- name: ストレージフォルダが書き込み可能であること
-  file:
-    path: "/vagrant/storage"
-    state: directory
-    recurse: true
-    mode: 0777
+- include: local.yml
+  when: not is_production
 
-- name: キャッシュフォルダが書き込み可能であること
-  file:
-    path: "/vagrant/bootstrap/cache"
-    state: directory
-    recurse: true
-    mode: 0777
+- include: production.yml
+  when: is_production

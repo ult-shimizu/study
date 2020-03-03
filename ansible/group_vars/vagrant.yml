@@ -1,0 +1,24 @@
+# ------------------------------------------------------
+# 環境
+stage: "local"  # local / production で区別。Laravelのapp.env相当。
+env: "local"  # デプロイ先に対する名前の用途で使用
+project_root: /vagrant
+app_user: vagrant
+is_production: false
+
+# ------------------------------------------------------
+# Apache
+document_root: "/vagrant/public"
+
+# ------------------------------------------------------
+# Application
+app_key: "base64:us0blA3Zd+sjcdo5B7PWEyNKaUslfVwQcltZe8HHydo="  # 外部環境ではVaultで暗号化する
+app_url: "http://127.0.0.1:8005"
+
+# ------------------------------------------------------
+# MySQL
+db_host: "127.0.0.1"
+db_port: 3306
+db_name: "study"
+db_user: "study"
+db_pass: "secret"  # 外部環境の場合はVaultで暗号化する

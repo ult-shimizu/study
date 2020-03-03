@@ -1,0 +1,24 @@
+# ------------------------------------------------------
+# 環境
+stage: "production"  # local / production で区別。Laravelのapp.env相当。
+env: "production"  # デプロイ先に対する名前の用途で使用
+project_root: /var/www/study/current
+app_user: ec2-user
+is_production: true
+
+# ------------------------------------------------------
+# Apache
+document_root: "/var/www/study/current/public"
+
+# ------------------------------------------------------
+# Application
+# app_key: vaultで定義
+app_url: "http://127.0.0.1:8005" # TODO:EC2を作成後に定義する
+
+# ------------------------------------------------------
+# MySQL
+db_host: "127.0.0.1"
+db_port: 3306
+db_name: "study"
+db_user: "study"
+# db_pass: vaultで定義
