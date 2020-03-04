@@ -12,9 +12,16 @@ set('repository', 'git@https://github.com/ult-shimizu/study.git');
 // [Optional] Allocate tty for git clone. Default value is false.
 set('git_tty', false);
 
-// Shared files/dirs between deploys 
-add('shared_files', []);
-add('shared_dirs', []);
+// Shared files/dirs between deploys
+//ログファイルなどバージョンをまたいで共有したいファイルやディレクトリ
+//ここで指定したファイルやディレクトリはデプロイ後に shared_dirs に格納され、
+//バージョン間で共有することができるようになります。
+add('shared_files', [
+    '.env'
+]);
+add('shared_dirs', [
+    'storage',
+]);
 
 // Writable dirs by web server 
 add('writable_dirs', []);
