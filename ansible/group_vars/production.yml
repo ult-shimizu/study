@@ -22,3 +22,8 @@ db_port: 3306
 db_name: "study"
 db_user: "study"
 # db_pass: vaultで定義
+
+# mysql57にしないとマイグレーションがエラーになる
+# TODO:ローカルはmysql56しかないので後で考える
+# https://qiita.com/beer_geek/items/6e4264db142745ea666f
+mysql_version: 57
