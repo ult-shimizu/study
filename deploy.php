@@ -7,7 +7,7 @@ require 'recipe/laravel.php';
 set('application', 'study');
 
 // Project repository
-set('repository', 'git@https://github.com/ult-shimizu/study.git');
+set('repository', 'github.com:ult-shimizu/study.git');
 
 // [Optional] Allocate tty for git clone. Default value is false.
 set('git_tty', false);
