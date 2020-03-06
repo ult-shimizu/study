@@ -76,11 +76,33 @@
     state: present
   notify: restart httpd
 
-# mysql
-- name: MySQL本体と依存関係のあるプログラムがインストールされていること
+# いろいろ挑戦したものの、AWSLinuxでcentOS7用のmysqlを設定しようとするとエラー
+- name: リポジトリ追加
   yum:
-    name: mysql{{mysql_version}}-server
+    name: https://dev.mysql.com/get/mysql80-community-release-el7-1.noarch.rpm
     state: present
+
+- name: mysql8.0リポジトリの無効化
+  shell: 'yum-config-manager --disable mysql80-community'
+
+- name: mysql8.0削除
+  yum:
+    name: mysql-community-common
+    state: absent
+
+- name: mysql5.7リポジトリの有効化
+  shell: 'yum-config-manager --enable mysql57-community'
+
+- name: mysqlインストール
+  yum:
+    name: mysql-community-server
+    state: present
+
+# mysql
+#- name: MySQL本体と依存関係のあるプログラムがインストールされていること
+#  yum:
+#    name: mysql{{mysql_version}}-server
+#    state: present
 
 # Mysql-pythonのインストールがうまくいかないため、mysqlの設定は手動で行うものとする
 #- name: Mysql-pythonがインストールされていること
