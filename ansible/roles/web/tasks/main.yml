@@ -7,7 +7,7 @@
 # Apache
 - name: httpdがインストールされていること
   yum:
-    name: httpd24
+    name: httpd
     state: present
 
 - name: Apacheが起動してenableになっていること
@@ -65,60 +65,40 @@
   notify: restart httpd
 
 # PHP
+- name: Remiリポジトリが存在すること
+  yum:
+    name: "http://rpms.famillecollet.com/enterprise/remi-release-7.rpm"
+    state: present
+
 - name: PHPとPHP関連モジュールがインストールされていること
   yum:
+    enablerepo: "remi,remi-php71"
     name:
-      - php71
-      - php71-mysqlnd
-      - php71-mbstring
-      - php71-pdo
-      - php71-bcmath
+      - php
+      - php-mysqlnd
+      - php-mbstring
+      - php-pdo
+      - php-bcmath
+      - php-xml
     state: present
   notify: restart httpd
 
-# いろいろ挑戦したものの、AWSLinuxでcentOS7用のmysqlを設定しようとするとエラー
-- name: リポジトリ追加
+# MySQL
+- name: mariadb-libsは存在しないこと
   yum:
-    name: https://dev.mysql.com/get/mysql80-community-release-el7-1.noarch.rpm
+    name:
+      - mariadb-libs
+    state: removed
+
+- name: mysql用リポジトリ追加
+  yum:
+    name: http://dev.mysql.com/get/mysql57-community-release-el7-7.noarch.rpm
     state: present
-
-- name: mysql8.0リポジトリの無効化
-  shell: 'yum-config-manager --disable mysql80-community'
-
-- name: mysql8.0削除
-  yum:
-    name: mysql-community-common
-    state: absent
-
-- name: mysql5.7リポジトリの有効化
-  shell: 'yum-config-manager --enable mysql57-community'
 
 - name: mysqlインストール
   yum:
     name: mysql-community-server
     state: present
-
-# mysql
-#- name: MySQL本体と依存関係のあるプログラムがインストールされていること
-#  yum:
-#    name: mysql{{mysql_version}}-server
-#    state: present
-
-# Mysql-pythonのインストールがうまくいかないため、mysqlの設定は手動で行うものとする
-#- name: Mysql-pythonがインストールされていること
-#  yum:
-#    name:
-#      - libselinux-python
-#      - python
-#      - python-pip
-#      - python-devel
-#    state: present
-#
-#- name: Mysql-pythonがインストールされていること
-#  pip:
-#    name:
-#      - mysqlclient
-#      - MySQL-python
 
 - name: MySQLサービスが自動起動すること
   service:
@@ -128,41 +108,31 @@
 
 - name: データディレクトリが初期化済であること
   stat: path=/var/lib/mysql_initialized
-#  register: mysql_initialized_stat
-#  changed_when: not mysql_initialized_stat.stat.exists
+  register: mysql_initialized_stat
+  changed_when: not mysql_initialized_stat.stat.exists
 
-#- name: root アカウントのパスワードを設定
-#  mysql_user:
-#    name: root
-#    host: localhost
-#    password: "{{ db_pass }}"
+# Mysql-pythonのインストールがうまくいかないため、mysqlの設定は手動で行うものとする
 
-#- name: ~/.my.cnf を配置
-#  template:
-#    src: my.cnf.j2
-#    dest: "{{ lookup('env', 'HOME') }}/.my.cnf"
-#    mode: 0600
-
-#- name: 開発用DBの作成
-#  mysql_db: db={{ db_name }} state=present encoding=utf8mb4
-#
-#- name: MySQL開発DBアカウントの作成
-#  mysql_user:
-#    name: "{{ db_user }}"
-#    password: "{{ db_pass }}"
-#    host: "127.0.0.1"
-#    priv: "*.*:ALL"
-#    append_privs: yes
-#    state: present
-
-#CREATE USER study@localhost IDENTIFIED BY 'xxx';
-#GRANT ALL PRIVILEGES ON study .* TO study@localhost IDENTIFIED BY 'xxx';
-#CREATE DATABASE study CHARACTER SET utf8mb4;
+#  set password for root@localhost=password('passwordPASSWORD@999');
+#  SET GLOBAL validate_password_length=6;
+#  SET GLOBAL validate_password_policy=LOW;
+#  set password for root@localhost=password('xxx');
+#  CREATE USER study@localhost IDENTIFIED BY 'xxx';
+#  GRANT ALL PRIVILEGES ON study .* TO study@localhost IDENTIFIED BY 'xxx';
+#  CREATE DATABASE study CHARACTER SET utf8mb4;
 
 # タイムゾーン設定
 - name: timezoneが「Asia/Tokyo」となっていること
   timezone:
     name: Asia/Tokyo
+
+# CentOS7の場合はzip unzipをインストールしないとcomposer installが失敗する
+- name: zipとunzipがインストールされていること
+  yum:
+    name:
+      - zip
+      - unzip
+    state: present
 
 # コンポーザー
 # TODO:warningの解消（URL指定のせい？現状インストールは成功するので後回し）

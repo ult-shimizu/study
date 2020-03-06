@@ -12,7 +12,9 @@ Vagrant.configure("2") do |config|
 
   # Every Vagrant development environment requires a box. You can search for
   # boxes at https://vagrantcloud.com/search.
-  config.vm.box = "mvbcoding/awslinux"
+  # 以下のawslinuxは古いバージョンで開発する上で不都合であるため、centOS7を使用する
+  # config.vm.box = "mvbcoding/awslinux"
+  config.vm.box = "centos/7"
 
   # Disable automatic box update checking. If you disable this, then
   # boxes will only be checked for updates when the user runs
@@ -26,7 +28,8 @@ Vagrant.configure("2") do |config|
     config.proxy.no_proxy = ENV["NO_PROXY"] || "localhost,127.0.0.1"
   end
 
-  config.vbguest.auto_update = false
+  # AWSLinuxの時は無効化しないとエラーになっていたが、CentOS7だと有効化しないと共有フォルダがエラーになる
+  config.vbguest.auto_update = true
 
   # Create a forwarded port mapping which allows access to a specific port
   # within the machine from a port on the host machine. In the example below,
@@ -54,7 +57,7 @@ Vagrant.configure("2") do |config|
   # the path on the host to the actual folder. The second argument is
   # the path on the guest to mount the folder. And the optional third
   # argument is a set of non-required options.
-  config.vm.synced_folder ".", "/vagrant", :owner => 'vagrant', :group => 'vagrant', mount_options: ['dmode=777','fmode=777']
+  config.vm.synced_folder ".", "/vagrant", type: "virtualbox", :owner => 'vagrant', :group => 'vagrant', mount_options: ['dmode=777','fmode=777']
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
