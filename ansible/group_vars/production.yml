@@ -3,7 +3,7 @@
 stage: "production"  # local / production で区別。Laravelのapp.env相当。
 env: "production"  # デプロイ先に対する名前の用途で使用
 project_root: /var/www/study/current
-app_user: ec2-user
+app_user: centos
 is_production: true
 
 # ------------------------------------------------------
@@ -13,7 +13,7 @@ document_root: "/var/www/study/current/public"
 # ------------------------------------------------------
 # Application
 # app_key: vaultで定義
-app_url: "13.114.91.42"
+app_url: "52.193.103.19"
 
 # ------------------------------------------------------
 # MySQL

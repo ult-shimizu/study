@@ -4,6 +4,10 @@
     state: latest
     update_cache: yes
 
+- name: Selinuxは無効化されていること
+  selinux: state=disabled
+  when: not is_production
+
 # Apache
 - name: httpdがインストールされていること
   yum:
@@ -145,3 +149,11 @@
 
 - include: production.yml
   when: is_production
+
+# 環境構築後の作業
+# MySQLユーザ設定
+# composer update
+# ssh接続設定（TODO：template用意してansibleで自動化）
+#  touch ~/.ssh/config
+#  sudo vi ~/.ssh/config
+#  chmod 600 ~/.ssh/config
