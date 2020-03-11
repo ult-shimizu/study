@@ -4,6 +4,11 @@
     state: latest
     update_cache: yes
 
+- name: gitがインストール済であること
+  yum:
+    name: git
+    state: present
+
 - name: Selinuxは無効化されていること
   selinux: state=disabled
   when: not is_production

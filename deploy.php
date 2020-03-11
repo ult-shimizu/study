@@ -3,11 +3,13 @@ namespace Deployer;
 
 require 'recipe/laravel.php';
 
+// vendor/bin/dep deploy production
+
 // Project name
 set('application', 'study');
 
 // Project repository
-set('repository', 'github.com:ult-shimizu/study.git');
+set('repository', 'git@github.com:ult-shimizu/study.git');
 
 // [Optional] Allocate tty for git clone. Default value is false.
 set('git_tty', false);
