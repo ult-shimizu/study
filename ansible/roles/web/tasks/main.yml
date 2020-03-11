@@ -11,7 +11,6 @@
 
 - name: Selinuxは無効化されていること
   selinux: state=disabled
-  when: not is_production
 
 # Apache
 - name: httpdがインストールされていること
@@ -89,6 +88,7 @@
       - php-pdo
       - php-bcmath
       - php-xml
+      - php-process
     state: present
   notify: restart httpd
 
@@ -122,6 +122,7 @@
 
 # Mysql-pythonのインストールがうまくいかないため、mysqlの設定は手動で行うものとする
 
+#  sudo cat /var/log/mysqld.log | grep 'password is generated'
 #  set password for root@localhost=password('passwordPASSWORD@999');
 #  SET GLOBAL validate_password_length=6;
 #  SET GLOBAL validate_password_policy=LOW;

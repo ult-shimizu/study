@@ -9,7 +9,7 @@ require 'recipe/laravel.php';
 set('application', 'study');
 
 // Project repository
-set('repository', 'git@github.com:ult-shimizu/study.git');
+set('repository', 'https://github.com/ult-shimizu/study.git');
 
 // [Optional] Allocate tty for git clone. Default value is false.
 set('git_tty', false);
@@ -18,15 +18,16 @@ set('git_tty', false);
 //ログファイルなどバージョンをまたいで共有したいファイルやディレクトリ
 //ここで指定したファイルやディレクトリはデプロイ後に shared_dirs に格納され、
 //バージョン間で共有することができるようになります。
-add('shared_files', [
-    '.env'
-]);
-add('shared_dirs', [
-    'storage',
-]);
+//recipe/laravel.phpで設定されているため、とくに設定はしない
+//add('shared_files', [
+//    '.env'
+//]);
+//add('shared_dirs', [
+//    'storage',
+//]);
 
 // Writable dirs by web server 
-add('writable_dirs', []);
+//add('writable_dirs', []);
 
 
 // Hosts
