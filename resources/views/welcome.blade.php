@@ -93,7 +93,39 @@
                     <a href="https://forge.laravel.com">Forge</a>
                     <a href="https://github.com/laravel/laravel">GitHub</a>
                 </div>
+
+                <div>
+                    <input id="word" type="text">
+                    <button onclick="getReply();">送信</button>
+                </div>
             </div>
         </div>
+        <script>
+            function getReply(){
+                let comment = document.getElementById('word').value
+
+                // XMLHttpRequestオブジェクトの作成
+                let request = new XMLHttpRequest();
+                const url = 'https://api.a3rt.recruit-tech.co.jp/talk/v1/smalltalk';
+                const apikey = encodeURIComponent("{{ env('TALK_API_KEY', null)  }}");
+                const query = encodeURIComponent(comment);
+
+                // URLを開く
+                request.open('POST', url, true);
+
+                // サーバに対して解析方法を指定する
+                request.setRequestHeader( 'Content-Type', 'application/x-www-form-urlencoded' );
+
+                // レスポンスが返ってきた時の処理を記述
+                request.onload = function () {
+                    const data = JSON.parse(this.response);
+                    alert(data.results[0].reply)
+                }
+
+                // リクエストをURLに送信
+                request.send("apikey=" + apikey + "&query=" + query);
+            }
+
+        </script>
     </body>
 </html>
