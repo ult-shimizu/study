@@ -2,5 +2,6 @@
   become: true
   vars_files:
     - "group_vars/vagrant.yml"
+    - "group_vars/vagrant_vault.yml"
   roles:
     - web

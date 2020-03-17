@@ -80,7 +80,15 @@ Vagrant.configure("2") do |config|
   #   apt-get install -y apache2
   # SHELL
 
+  if !File.exist?(".ansible-vault-pass")
+    puts "ERROR: .ansible-vault-passファイルを作成してください(ansible-vaultのパスワードを記載する必要があります)。"
+    abort
+  end
+  # ローカルのパスワードファイルはパーミッションの都合で参照出来ないため/tmpに複製する
+  config.vm.provision :shell, inline: "cp /vagrant/.ansible-vault-pass /tmp/vault_pass && chmod 644 /tmp/vault_pass"
+
   config.vm.provision "ansible_local" do |ansible|
     ansible.playbook = "/vagrant/ansible/playbook_vagrant.yml"
+    ansible.vault_password_file = "/tmp/vault_pass"
   end
 end
