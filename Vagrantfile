@@ -91,4 +91,11 @@ Vagrant.configure("2") do |config|
     ansible.playbook = "/vagrant/ansible/playbook_vagrant.yml"
     ansible.vault_password_file = "/tmp/vault_pass"
   end
+
+  # ansibleでapacheの自動起動設定はしたものの、毎回起動されていないため起動コマンドを実行する
+  # 原因は不明だが、httpdのドキュメントルートを共有フォルダ(synced_folder)に設定していると、
+  # httpdの起動時にフォルダが存在しなくて、Vagrant起動時にhttpdの起動に失敗する時があるらしい
+  config.vm.provision "shell", run: "always", :inline => <<-COMMAND
+     sudo systemctl start httpd.service
+  COMMAND
 end
